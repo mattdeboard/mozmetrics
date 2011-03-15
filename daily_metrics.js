@@ -346,11 +346,13 @@ var IdlenessObserver = {
   }
 };
 
- function DailyUseStudyWindowObserver(window, globalInstance) {
-    DailyUseStudyWindowObserver.baseConstructor.call(this, window, globalInstance);
+function DailyUseStudyWindowObserver(window, globalInstance) {
+    DailyUseStudyWindowObserver.baseConstructor.call(this, window, 
+						     globalInstance);
 }
 
-BaseClasses.extend(DailyUseStudyWindowObserver, BaseClasses.GenericWindowObserver);
+BaseClasses.extend(DailyUseStudyWindowObserver, 
+		   BaseClasses.GenericWindowObserver);
 
 DailyUseStudyWindowObserver.prototype.install = function () {
     // This allows access to the current browser window attributes
@@ -557,7 +559,7 @@ DailyUseStudyGlobalObserver.prototype.onAppStartup = function() {
       });
 
       for each (var tab in winState.tabs){
-        countTabs = countTabs + 1;
+        countTabs += 1;
       }
     }, this);
 
