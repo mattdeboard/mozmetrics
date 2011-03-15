@@ -438,8 +438,8 @@ DailyUseStudyGlobalObserver.prototype.recordNumWindowsAndTabs = function(adj) {
     }
 
     this.record( DailyEventCodes.NUM_TABS, 
-                 numWindows + " winders", 
-                 numTabs + " tabes" );
+                 numWindows + " windows", 
+                 numTabs + " tabs" );
 };
 
 
@@ -664,10 +664,7 @@ DailyUseStudyWebContent.prototype.__defineGetter__("saveButtons",
   });
 
 
-DailyUseStudyWebContent.prototype.deleteDataOlderThanADay = function(store) {
-  /* TODO: we're breaking encapsulation here because there's no public
-   * method to do this on the data store object... this should be implemented
-   * there. */
+/*DailyUseStudyWebContent.prototype.deleteDataOlderThanADay = function(store) {
   let selectSql = "SELECT timestamp FROM " + store._tableName +
     " ORDER BY timestamp DESC LIMIT 1";
   let selectStmt = store._createStatement(selectSql);
@@ -682,13 +679,12 @@ DailyUseStudyWebContent.prototype.deleteDataOlderThanADay = function(store) {
     console.info("Executed " + wipeSql);
   }
   selectStmt.finalize();
-};
+};*/
 
 DailyUseStudyWebContent.prototype.onPageLoad = function(experiment,
                                                        document,
                                                        graphUtils) {
-  // Get rid of old data so it doesn't pollute current submission
-  this.deleteDataOlderThanADay(experiment.dataStore);
+
   experiment.getDataStoreAsJSON(function(rawData) {
     let firstNumBookmarks = null;
     let bkmks = 0;
