@@ -164,10 +164,12 @@ var BookmarkObserver = {
         for each (rootFolder in rootFolders) {
           digIntoFolder(rootFolder, 0);
         }
+	// Only record the numeric values to the db. Can write scripts
+	// on the backend to sum and average. 
         exports.handlers.record(DailyEventCodes.BOOKMARK_STATUS,
-                                totalBookmarks + " total bookmarks",
-                                totalFolders + " folders",
-                                "folder depth " + greatestDepth);
+                                totalBookmarks,
+                                totalFolders,
+                                greatestDepth);
       },
 
       uninstall: function() {
@@ -178,6 +180,8 @@ var BookmarkObserver = {
       },
 
       onItemAdded: function(itemId, parentId, index, type) {
+	  // Set the database entries to digits to make collection less
+	  // insane, by minimizing the need for string splits/regexes.
         let folderId = this.bmsvc.getFolderIdForItem(itemId);
         if (!this.lmsvc.isLivemark(folderId)) {
           // Ignore livemarks -these are constantly added automatically
@@ -185,11 +189,11 @@ var BookmarkObserver = {
           switch (type) {
             case this.bmsvc.TYPE_BOOKMARK:
               exports.handlers.record(DailyEventCodes.BOOKMARK_CREATE,
-                                      "New Bookmark Added");
+                                      1);
             break;
             case this.bmsvc.TYPE_FOLDER:
               exports.handlers.record(DailyEventCodes.BOOKMARK_CREATE,
-                                      "New Bookmark Folder");
+                                      1);
             break;
           }
         }
@@ -200,7 +204,7 @@ var BookmarkObserver = {
         if (!isLivemark) {
         // Ignore livemarks
           exports.handlers.record(DailyEventCodes.BOOKMARK_MODIFY,
-                                  "Bookmark Removed");
+                                  -1);
         }
       },
 
@@ -212,7 +216,7 @@ var BookmarkObserver = {
       onItemMoved: function(itemId, oldParentId, oldIndex, newParentId,
                             newIndex, type) {
         exports.handlers.record(DailyEventCodes.BOOKMARK_MODIFY,
-                                "Bookmark Moved");
+                                0);
       }
     };
 
@@ -369,8 +373,8 @@ DailyUseStudyWindowObserver.prototype.install = function () {
 	    console.trace("Recording Opened tab.");
             }, false);
     this._listen(container, "TabClose", function() {
-            // This happens before the tab closes, so adjust by -1 to get the
-            // number after the close.
+            // This happens before the tab closes, so adjust by -1 to get 
+	    // the number after the close.
             exports.handlers.recordNumWindowsAndTabs(-1); 
 	    console.trace("Recording Closed tab.");
             }, false);
@@ -388,10 +392,10 @@ DailyUseStudyWindowObserver.prototype.install = function () {
 
     // Increment by 1 again to capture the 'base' window as a tab as well
     numTabs += this.window.getBrowser().tabContainer.itemCount;
-    console.debug("window observer proto install method");
+  
     exports.handlers.record( DailyEventCodes.NUM_TABS,
-                             (numWindows + 1) + " windows",
-                             numTabs + " tabs" );
+                             (numWindows + 1),
+                             numTabs );
 };
 
 DailyUseStudyWindowObserver.prototype.uninstall = function() {
@@ -409,10 +413,10 @@ DailyUseStudyWindowObserver.prototype.uninstall = function() {
       }
     }
   }
-  console.debug("uninstall method");
+  
   exports.handlers.record( DailyEventCodes.NUM_TABS,
-                           (numWindows - 1) + " windows",
-                           numTabs + " tabs" );
+                           (numWindows - 1),
+                           numTabs );
 };
 
 
@@ -438,8 +442,8 @@ DailyUseStudyGlobalObserver.prototype.recordNumWindowsAndTabs = function(adj) {
     }
 
     this.record( DailyEventCodes.NUM_TABS, 
-                 numWindows + " windows", 
-                 numTabs + " tabs" );
+                 numWindows, 
+                 numTabs);
 };
 
 
@@ -565,8 +569,8 @@ DailyUseStudyGlobalObserver.prototype.onAppStartup = function() {
 
     console.info("Session Restored: total windows: "+ countWindows
       + " total tabs: " +  countTabs);
-    this.record(DailyEventCodes.SESSION_ON_RESTORE, "Windows " + countWindows,
-                "Tabs " + countTabs);
+    this.record(DailyEventCodes.SESSION_ON_RESTORE, countWindows,
+                countTabs);
   } else {
     this.record(DailyEventCodes.SESSION_ON_RESTORE, "Windows 0", "Tabs 0");
   }
