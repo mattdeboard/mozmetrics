@@ -5,16 +5,16 @@ BaseClasses = require("study_base_classes.js");
 exports.experimentInfo = {
 
     testName: "Daily Browser Usage Overview",
-    testId: 9876,
-    testInfoUrl: null,
-    summary: "A sample study on daily browser usage.",
+    testId: 9999,
+    testInfoUrl: "https://github.com/mattdeboard/mozmetrics",
+    summary: "A study on daily browser usage.",
     thumbnail: null,
     versionNumber: 1,
-    duration: 5,
+    duration: 7,
     minTPVersion:"1.01a1",
     MinFXVersion: "3.0",
-    recursAutomatically: false,
-    recurrenceIterval: 60,
+    recursAutomatically: true,
+    recurrenceIterval: 8,
     startDate: null,
     optInRequired: false,
     surveyExplanation: "Thank you for participating in my study about your daily browser usage!"
@@ -69,8 +69,8 @@ var eventCodeToEventName = ["Study Status", "Firefox Startup", "Firefox Shutdown
 
 exports.dataStoreInfo = {
 
-    fileName: "browser_usage_example_results.sqlite",
-    tableName: "usage_patterns",
+    fileName: "daily_browser_usage.sqlite",
+    tableName: "daily_usage_patterns",
     columns: [{property: "event_code", 
                type: BaseClasses.TYPE_INT_32, displayName: "Event",
                displayValue: eventCodeToEventName},
@@ -138,10 +138,10 @@ var BookmarkObserver = {
           if (rootNode.childCount > 0) {
             // don't count livemarks
             let folderId = bmsvc.getFolderIdForItem( 
-                                                rootNode.getChild(0).itemId );
+		rootNode.getChild(0).itemId );
             if (!lmsvc.isLivemark(folderId)) {
-              // iterate over the immediate children of this folder, recursing
-              // into any subfolders
+		// iterate over the immediate children of this folder, recursing 
+		// into any subfolders
               for (let i = 0; i < rootNode.childCount; i ++) {
                 let node = rootNode.getChild(i);
                 if (node.type == node.RESULT_TYPE_FOLDER) {
@@ -535,7 +535,7 @@ DailyUseStudyGlobalObserver.prototype.onAppStartup = function() {
   DailyUseStudyGlobalObserver.superClass.onAppStartup.call(this);
   // TODO how can we tell if something has gone wrong with session restore?
   this.record(DailyEventCodes.BROWSER_START);
-  console.info("Day in the life study got app startup message.");
+  console.info("Daily Usage study got app startup message.");
 
   //RESTORE SESSION information, number of tabs and windows restored
   let stateObject = null;
