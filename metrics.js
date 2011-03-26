@@ -53,6 +53,20 @@ function MetricsStore(name) {
 }
 
 MetricsStore.prototype = {
+  /* Am I approaching this all wrong? Instead of simply polling the data
+   * from the database, do I need to set up observers on each of the 
+   * events which we want to measure? That solution seems to be beyond
+   * the relatively narrow scope of the Sync service, since each built-
+   * in collection seems to be observing a discrete metric, such as book-
+   * marks, tabs, history, and so forth. The Metrics service would be
+   * observing a wide variety of metrics, like browser stops and starts,
+   * downloads, addon installs, and so forth.
+   * 
+   * If polling a database IS the proper way to do it, do I need to set
+   * an observer for startup events in the MetricsTracker prototype, and
+   * have it check datetime of last update, and if it was 24 hours ago or
+   * longer, trigger a database read/new MetricsRecord instance?
+   */
   __proto__: Store.prototype,
   
   _initDB: function (fileName, tableName, columns) {
@@ -99,6 +113,7 @@ MetricsStore.prototype = {
 
   _setGUID: [],
   get setGUID () {
+    // returns a value like {<guid>: {<stats array>}}
     let stats = this._metricsData;
     let guid = Utils.makeGUID();
     return this._setGUID[guid] = stats;
@@ -110,10 +125,23 @@ MetricsStore.prototype = {
   },
   
   itemExists: function itemExists(id) {
-    
+
 
     
   }
   
 };
+
+function MetricsTracker(name) {
+  Tracker.call(this, name);
+  
+  Svc.Obs.add("weave:engine:start-tracking", this);
+  Svc.Obs.add("weave:engine:stop-tracking", this);
+}
+
+MetricsTracker.prototype = {
+  __proto__: Tracker.prototype,
+  
+  _enabled: False,
+  
 
