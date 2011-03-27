@@ -1,2 +1,2 @@
 content         mozmetrics      chrome/content/
-resource        metricsData     study/   
+resource        modules         modules/   

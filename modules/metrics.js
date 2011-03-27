@@ -10,11 +10,11 @@ const Cu = Components.utils;
 const Cr = Components.results;
 
 Cu.import("resource://gre/modules/JSON.jsm");
-Cu.import("resource://services-sync/engines.js");
-Cu.import("resource://services-sync/main.js");
-Cu.import("resource://services-sync/record.js");
-Cu.import("resource://services-sync/util.js");
-Cu.import("resource://services-sync/engines/clients.js");
+Cu.import("resource://gre/modules/services-sync/engines.js");
+Cu.import("resource://gre/modules/services-sync/main.js");
+Cu.import("resource://gre/modules/services-sync/record.js");
+Cu.import("resource://gre/modules/services-sync/util.js");
+Cu.import("resource://gre/modules/services-sync/engines/clients.js");
 Cu.import("resource://modules/collector.js");
 
 const METRICS_TTL = 604800; // 7 days
