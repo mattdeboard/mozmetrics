@@ -1,0 +1,2 @@
+content         mozmetrics      chrome/content/
+resource        metricsData     study/   
