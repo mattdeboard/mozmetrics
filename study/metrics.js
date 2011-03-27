@@ -15,7 +15,7 @@ Cu.import("resource://services-sync/main.js");
 Cu.import("resource://services-sync/record.js");
 Cu.import("resource://services-sync/util.js");
 Cu.import("resource://services-sync/engines/clients.js");
-Cu.import("resource://mozmetrics/daily_metrics.js");
+Cu.import("resource://modules/collector.js");
 
 const METRICS_TTL = 604800; // 7 days
 
@@ -194,3 +194,14 @@ MetricsTracker.prototype = {
   }
 };  
 
+function MetricsSvc() {
+  Utils.delay(this._registerEngine, 7000, this, "_startupTimer");
+};
+
+MetricsSvc.prototype = {
+  _registerEngine: function () {
+    Engines.register(MetricsEngine);
+  }
+}
+
+var metricsSvc = new MetricsSvc();
