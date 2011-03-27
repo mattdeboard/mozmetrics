@@ -92,7 +92,7 @@ exports.dataStoreInfo = {
               {property: "guid",
                type: BaseClasses.TYPE_STRING,
                displayName: "GUID"
-              }
+              }]
              };
 
 // 3. handlers
@@ -523,9 +523,11 @@ DailyUseStudyGlobalObserver.prototype.record = function(eventCode, val1, val2,
       let rng = Cc["@mozilla.org/security/random-generator;1"].
         createInstance(Ci.nsIRandomGenerator);
       let bytes = rng.generateRandomBytes(9);
-      let byteString = [String.fromCharCode(byte) for each (byte in bytes).join("");];
+      let byteString = 
+        [String.fromCharCode(byte) for each (byte in bytes)].join("");
       return btoa(byteString).replace('+', '-', 'g').replace('/', '_', 'g');
     };
+  }
 
  DailyUseStudyGlobalObserver.superClass.record.call(this,
   {
@@ -536,7 +538,7 @@ DailyUseStudyGlobalObserver.prototype.record = function(eventCode, val1, val2,
     timestamp: timestamp,
     guid: guid
   });
-};
+},
 
 DailyUseStudyGlobalObserver.prototype.onAppStartup = function() {
   DailyUseStudyGlobalObserver.superClass.onAppStartup.call(this);

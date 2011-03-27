@@ -42,6 +42,10 @@ function MetricsEngine() {
 }
 
 MetricsEngine.prototype = {
+  // Don't need dupe checking per se since we're going to have a lot of
+  // "dupe" entries, maybe even duplicate eventCodes per timestamp. Some
+  // rows in the metrics database, in other words, may be exactly identi-
+  // cal.
   __proto__: SyncEngine.prototype,
   _recordObj: MetricsRecord,
   _storeObj: MetricsStore,
@@ -87,7 +91,6 @@ MetricsStore.prototype = {
     return storageSvc.openDatabase(file);
   },
   
-  _stmt: null,
   get stmt () {
     // Creates an mozIStorageStatement object we can iterate through
     // to create serialized data from the metrics db. A GUID will be added
@@ -103,34 +106,53 @@ MetricsStore.prototype = {
     return openConn.createStatement(sqlQuery);
   },
   
-  _metricsData: [],
   get metricsData () {
-    /* Utils.queryAsync returns a {column_name: value} array from our metrics 
-     * db, so there is no need to write a custom mozIStorageService algorithm 
-     * here. This is step 3 in preparing a new record. */
-    let statement = this._stmt;
+    // This is step 3 in preparing a new record.
+    let statement = this.stmt;
     return Utils.queryAsync(statement, this._columns);
   },
 
   _setGUID: [],
   get setGUID () {
     // returns a value like {<guid>: {<stats array>}}
-    let stats = this._metricsData;
+    let stats = this.metricsData;
     let guid = Utils.makeGUID();
-    return this._setGUID[guid] = stats;
+    this._setGUID[guid] = stats;
+    return this._setGUID;
   },
   
   createRecord: function createRecord(id, collection) {
     let record = new MetricsRecord(collection, id);
+    record.value = this._setGUID;
     return record;
   },
   
   itemExists: function itemExists(id) {
-
-
-    
-  }
+    let statement = "SELECT * FROM " + this._tableName + "WHERE guid = :guid";
+    return Utils.queryAsync(statement, this._columns)[0];
+  },
   
+  getAllIDs: function MetricsStore_getAllIDs() {
+    let statement = "SELECT guid FROM " + this._tableName;
+    let ids = Utils.queryAsync(statement, this._columns);
+    return ids;
+  },
+  
+  wipe: function MetricsStore_wipe() {
+    this._remoteClients = {};
+  },
+  
+  create: function MetricsStore_create(record) {
+    this._log.trace("Ignoring create call.");
+  },
+  
+  update: function MetricsStore_update(record) {
+    this._log.trace("Ignoring update call.");
+  },
+
+  remove: function MetricsStore_remove(record) {
+    this._log.trace("Ignoring remove call.");
+  }
 };
 
 function MetricsTracker(name) {
@@ -139,7 +161,7 @@ function MetricsTracker(name) {
   Svc.Obs.add("profile-after-change", this);
   Svc.Obs.add("weave:engine:start-tracking", this);
   Svc.Obs.add("weave:engine:stop-tracking", this);
-}
+};
 
 MetricsTracker.prototype = {
   __proto__: Tracker.prototype,
@@ -159,6 +181,16 @@ MetricsTracker.prototype = {
         this._enabled = false;
       }
       break;
+    case "profile-before-change":
+      // If "right now" is more than 24 hours after last sync, bump score
+      // to 100 for Sync ASAP.
+      if ((Date.now()-86400000) >= this.lastSyncLocal) {
+        this.score += 100;
+        this.modified = true;
+        this._log.trace("App startup at " + Date.now() + " detected.");
+      }
+      break;
     }
-  }};  
+  }
+};  
 
