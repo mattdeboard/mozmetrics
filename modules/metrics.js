@@ -10,13 +10,13 @@ const Cu = Components.utils;
 const Cr = Components.results;
 
 Cu.import("resource://gre/modules/JSON.jsm");
-Cu.import("resource://gre/modules/services-sync/engines.js");
-Cu.import("resource://gre/modules/services-sync/main.js");
-Cu.import("resource://gre/modules/services-sync/record.js");
-Cu.import("resource://gre/modules/services-sync/util.js");
-Cu.import("resource://gre/modules/services-sync/engines/clients.js");
+Cu.import("resource://services-sync/engines.js");
+Cu.import("resource://services-sync/main.js");
+Cu.import("resource://services-sync/record.js");
+Cu.import("resource://services-sync/util.js");
+Cu.import("resource://services-sync/engines/clients.js");
 
-var dataStoreInfo = require("collector.js");
+var collector = require("collector.js");
 
 const METRICS_TTL = 604800; // 7 days
 
@@ -101,7 +101,7 @@ MetricsStore.prototype = {
      * How's that for confusing naming conventions?
      */
     let results = [];
-    let cols = dataStoreInfo["columns"];
+    let cols = collector.dataStoreInfo["columns"];
     for (let i=0; i < cols.length; i++) {
       results.push(cols[i].property);
     };
@@ -113,8 +113,8 @@ MetricsStore.prototype = {
     // to create serialized data from the metrics db. A GUID will be added
     // by _setGUID. This is step 2 in preparing a new record.
     // dataStoreInfo is imported from collector.js
-    let openConn = this._initDB(dataStoreInfo["fileName"], 
-				                dataStoreInfo["tableName"], 
+    let openConn = this._initDB(collector.dataStoreInfo["fileName"], 
+				                collector.dataStoreInfo["tableName"], 
 				                this.columns());
     let now = Date.now();
     let sqlQuery = "SELECT * FROM " + this._tableName + 
