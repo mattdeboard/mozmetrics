@@ -15,8 +15,7 @@ Cu.import("resource://services-sync/main.js");
 Cu.import("resource://services-sync/record.js");
 Cu.import("resource://services-sync/util.js");
 Cu.import("resource://services-sync/engines/clients.js");
-
-var collector = require("collector");
+Cu.import("resource://modules/collector.js");
 
 const METRICS_TTL = 604800; // 7 days
 

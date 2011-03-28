@@ -1,4 +1,5 @@
 BaseClasses = require("study_base_classes.js");
+const {Cc,Ci,Components} = require("chrome");
 
 // 1. experimentInfo
 

@@ -44,7 +44,7 @@ var Cc = Components.classes;
 var Cu = Components.utils;
 var EXPORTED_SYMBOLS = ["DbUtils"];
 
-Cu.import("resource://modules/log4moz.js");
+Cu.import("resource://lib/log4moz.js");
 
 /* Make a namespace object called DbUtils, to export,
  * which contains each function in this file.*/

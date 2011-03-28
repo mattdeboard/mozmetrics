@@ -37,7 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = ['Log4Moz'];
-
+const {Cc,Ci,Cr,Cu} = require("chrome");
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
