@@ -15,7 +15,8 @@ Cu.import("resource://gre/modules/services-sync/main.js");
 Cu.import("resource://gre/modules/services-sync/record.js");
 Cu.import("resource://gre/modules/services-sync/util.js");
 Cu.import("resource://gre/modules/services-sync/engines/clients.js");
-Cu.import("resource://modules/collector.js");
+
+var dataStoreInfo = require("collector.js");
 
 const METRICS_TTL = 604800; // 7 days
 
@@ -73,6 +74,8 @@ MetricsStore.prototype = {
    */
   __proto__: Store.prototype,
   
+  _fileName: null,
+
   _initDB: function (fileName, tableName, columns) {
     // These properties reflect the properties of the dataStoreInfo
     // used by TestPilot originally, upon which this addon is heavily
@@ -90,15 +93,29 @@ MetricsStore.prototype = {
     file.append(this._fileName);
     return storageSvc.openDatabase(file);
   },
-  
+    
+  get columns () {
+    /* dataStoreInfo's "columns" property is an array with some 
+     * extraneous information from which we need to parse the column
+     * names, which is defined in each column's "property" property.
+     * How's that for confusing naming conventions?
+     */
+    let results = [];
+    let cols = dataStoreInfo["columns"];
+    for (let i=0; i < cols.length; i++) {
+      results.push(cols[i].property);
+    };
+    return results;
+  },
+
   get stmt () {
     // Creates an mozIStorageStatement object we can iterate through
     // to create serialized data from the metrics db. A GUID will be added
     // by _setGUID. This is step 2 in preparing a new record.
-    // dataStoreInfo is imported from daily_metrics.js
-    let openConn = this._initDB(dataStoreInfo.fileName, 
-				dataStoreInfo.tableName, 
-				dataStoreInfo.columns);
+    // dataStoreInfo is imported from collector.js
+    let openConn = this._initDB(dataStoreInfo["fileName"], 
+				                dataStoreInfo["tableName"], 
+				                this.columns());
     let now = Date.now();
     let sqlQuery = "SELECT * FROM " + this._tableName + 
       " WHERE timestamp > :last";
