@@ -57,7 +57,8 @@ function startup(data, reason) {
    * included by the overlay.)   Look at the document.loadOverlay function.
    * https://developer.mozilla.org/En/DOM/Document.loadOverlay
    */
-  
+  Engines.register(MetricsEngine);
+
 }
 
 function shutdown(data, reason) {
@@ -67,7 +68,6 @@ function shutdown(data, reason) {
 function install(data, reason) {
   // Optional.  Called before first call to startup() when
   // extension first installed.
-  Engines.register(MetricsEngine);
 }
 
 function uninstall(data, reason) {
