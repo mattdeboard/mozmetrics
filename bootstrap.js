@@ -42,11 +42,6 @@ Cu.import("resource://modules/metrics.js");
 Cu.import("resource://gre/modules/AddonManager.jsm");
 
 function startup(data, reason) {
-   // called when the extension needs to start itself up -
-   // data tells us extension id, version, and installPath.
-   // reason is one of APP_STARTUP, ADDON_ENABLE, ADDON_INSTALL,
-   // ADDON_UPGRADE, or ADDON_DOWNGRADE.
-
   /* TODO this will need to register a listener for new window opens,
    * so tht it can apply the TestPilotWindowHandlers.onWindowLoad()
    * currently defined in browser.js.  (Without an overlay, we have no
@@ -62,7 +57,6 @@ function startup(data, reason) {
 }
 
 function shutdown(data, reason) {
-   // reason is one of APP_SHUTDOWN, ADDON_DISABLE, ADDON_UNINSTALL, ADDON_UPGRADE, or ADDON_DOWNGRADE.
 }
 
 function install(data, reason) {
