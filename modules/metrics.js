@@ -2,19 +2,18 @@
  * Matt DeBoard (matt.deboard@gmail.com)
  */
 
-const EXPORTED_SYMBOLS = ["Metrics", "MetricsRecord"];
+const EXPORTED_SYMBOLS = ["MetricsEngine", "MetricsRecord"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 const Cr = Components.results;
 
+Cu.import("resource://services-sync/main.js");
 Cu.import("resource://gre/modules/JSON.jsm");
 Cu.import("resource://services-sync/engines.js");
-Cu.import("resource://services-sync/main.js");
 Cu.import("resource://services-sync/record.js");
 Cu.import("resource://services-sync/util.js");
-Cu.import("resource://services-sync/engines/clients.js");
 Cu.import("resource://modules/collector.js");
 
 const METRICS_TTL = 604800; // 7 days
@@ -34,8 +33,6 @@ MetricsRecord.prototype = {
 
 Utils.deferGetSet(MetricsRecord, "cleartext", ["event_code", "data1", "data2", 
 					                           "data3", "timestamp"]);
-
-Utils.lazy(this, "Metrics", MetricsEngine);
 
 function MetricsEngine() {
   SyncEngine.call(this, "Metrics");
