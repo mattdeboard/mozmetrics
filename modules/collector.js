@@ -1,27 +1,13 @@
-BaseClasses = require("study_base_classes.js");
-const {Cc,Ci,Components} = require("chrome");
 
-// 1. experimentInfo
+const EXPORTED_SYMBOLS = ["dataStoreInfo"];
 
-exports.experimentInfo = {
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+const Cr = Components.results;
 
-    testName: "Daily Browser Usage Overview",
-    testId: 9999,
-    testInfoUrl: "https://github.com/mattdeboard/mozmetrics",
-    summary: "A study on daily browser usage.",
-    thumbnail: null,
-    versionNumber: 1,
-    duration: 7,
-    minTPVersion:"1.01a1",
-    MinFXVersion: "3.0",
-    recursAutomatically: true,
-    recurrenceIterval: 8,
-    startDate: null,
-    optInRequired: false,
-    surveyExplanation: "Thank you for participating in my study about your daily browser usage!"
-};
+Cu.import("resource://modules/base_observers.js");
 
-// 2. dataStoreInfo
 
 const DailyEventCodes = {
     STUDY_STATUS: 0,
@@ -45,7 +31,6 @@ const DailyEventCodes = {
     PRIVATE_OFF: 18,
     MEMORY_USAGE:19,
     SESSION_ON_RESTORE:20,
-    SESSION_RESTORE: 21, // NOT USED
     PLUGIN_VERSION:22,
     HISTORY_STATUS: 23,
     PROFILE_AGE: 24,
@@ -54,47 +39,48 @@ const DailyEventCodes = {
     STARTUP_TIME: 27
 };
 
-var eventCodeToEventName = ["Study Status", "Firefox Startup", "Firefox Shutdown",
-                            "Firefox Restart", "Resume Active Use",
-                            "Begin Idle", "Search", "Search Settings Changed",
-                            "Bookmark Count", "New Bookmark", "Bookmark Opened",
+const eventCodeToEventName = ["Study Status", "Firefox Startup", 
+                            "Firefox Shutdown", "Firefox Restart", 
+                            "Resume Active Use", "Begin Idle", "Search", 
+                            "Search Settings Changed", "Bookmark Count", 
+                            "New Bookmark", "Bookmark Opened",
                             "Bookmark Modified", "Download",
                             "Download Settings Changed", "Add-ons Count",
                             "Add-on Installed", "Add-on Uninstalled",
-                            "Private Mode On", "Private Mode Off", "Memory Usage",
+                            "Private Mode On", "Private Mode Off", 
+                            "Memory Usage",
                             "Total Windows/Tabs in about:sessionrestore",
-                            "Actual Restored Windows/Tabs", "Plugin Version",
-                            "History Count", "Profile Age",
-                            "Session Restore Preferences",
-                            "Num Windows/Tabs", "Startup Time"];
+                            "Plugin Version", "History Count", "Profile Age",
+                            "Session Restore Preferences", "Num Windows/Tabs", 
+                            "Startup Time"];
 
-exports.dataStoreInfo = {
+const dataStoreInfo = {
 
-    fileName: "metrics.sqlite",
-    tableName: "moz_metrics",
-    columns: [{property: "event_code", 
-               type: BaseClasses.TYPE_INT_32, displayName: "Event",
-               displayValue: eventCodeToEventName},
-              {property: "data1", 
-               type: BaseClasses.TYPE_STRING, 
-               displayName: "Data 1"},
-              {property: "data2", 
-               type: BaseClasses.TYPE_STRING, 
-               displayName: "Data 2"},
-              {property: "data3", 
-               type: BaseClasses.TYPE_STRING, 
-               displayName: "Data 3"},
-              {property: "timestamp", 
-               type: BaseClasses.TYPE_DOUBLE, 
-               displayName: "Time",
-               displayValue: function(value) {
-                                return new Date(value).toLocaleString();}
-              },
-              {property: "guid",
-               type: BaseClasses.TYPE_STRING,
-               displayName: "GUID"
-              }]
-             };
+  fileName: "metrics.sqlite",
+  tableName: "moz_metrics",
+  columns: [{property: "event_code", 
+             type: BaseClasses.TYPE_INT_32, displayName: "Event",
+             displayValue: eventCodeToEventName},
+            {property: "data1", 
+             type: BaseClasses.TYPE_STRING, 
+             displayName: "Data 1"},
+            {property: "data2", 
+             type: BaseClasses.TYPE_STRING, 
+             displayName: "Data 2"},
+            {property: "data3", 
+             type: BaseClasses.TYPE_STRING, 
+             displayName: "Data 3"},
+            {property: "timestamp", 
+             type: BaseClasses.TYPE_DOUBLE, 
+             displayName: "Time",
+             displayValue: function(value) {
+               return new Date(value).toLocaleString();}
+            },
+            {property: "guid",
+             type: BaseClasses.TYPE_STRING,
+             displayName: "GUID"
+            }]
+};
 
 // 3. handlers
 
@@ -349,8 +335,7 @@ function DailyUseStudyWindowObserver(window, globalInstance) {
 						     globalInstance);
 }
 
-BaseClasses.extend(DailyUseStudyWindowObserver, 
-		   BaseClasses.GenericWindowObserver);
+extend(DailyUseStudyWindowObserver, GenericWindowObserver);
 
 DailyUseStudyWindowObserver.prototype.install = function () {
     // This allows access to the current browser window attributes
@@ -419,8 +404,7 @@ function DailyUseStudyGlobalObserver() {
                                                 DailyUseStudyWindowObserver);
 }
 
-BaseClasses.extend(DailyUseStudyGlobalObserver, 
-                   BaseClasses.GenericGlobalObserver);
+extend(DailyUseStudyGlobalObserver, BaseClasses.GenericGlobalObserver);
 
 DailyUseStudyGlobalObserver.prototype.recordNumWindowsAndTabs = function(adj) {
     let numTabs = 0;
@@ -641,8 +625,10 @@ function DailyUseStudyWebContent()  {
 // Web content
 function DailyUseStudyWebContent()  {
   DailyUseStudyWebContent.baseConstructor.call(this, exports.experimentInfo);
-}
-BaseClasses.extend(DailyUseStudyWebContent, BaseClasses.GenericWebContent);
+};
+
+extend(DailyUseStudyWebContent, BaseClasses.GenericWebContent);
+
 DailyUseStudyWebContent.prototype.__defineGetter__("dataViewExplanation",
 //TODO when study over, should say "at the end of the study" instead of "now".
   function() {

@@ -33,7 +33,7 @@ MetricsRecord.prototype = {
 };
 
 Utils.deferGetSet(MetricsRecord, "cleartext", ["event_code", "data1", "data2", 
-					       "data3", "timestamp"]);
+					                           "data3", "timestamp"]);
 
 Utils.lazy(this, "Metrics", MetricsEngine);
 
