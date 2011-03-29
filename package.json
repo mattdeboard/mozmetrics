@@ -1,8 +1,0 @@
-{
-    "description": "Privacy-sensitive metrics collection via Firefox Sync", 
-    "author": "Matt DeBoard", 
-    "version": "0.1", 
-    "fullName": "mozmetrics", 
-    "id": "jid0-i8HIiHVYZ6S4f8LkQOFGXafFND4",
-    "lib": "modules"
-}

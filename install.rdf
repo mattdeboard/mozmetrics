@@ -5,6 +5,7 @@
 
   <Description about=""urn:mozilla:install-manifest">
     <em:id>mozmetrics@mozilla.org</em:id>
+    <em:bootstrap>true</em:bootstrap>
     <em:version>0.1</em:version>
     <em:type>2</em:type>
     
@@ -19,9 +20,9 @@
     </em:targetApplication>
     
     <!-- Front End MetaData -->
-    <em:name>sample</em:name>
-    <em:description>A test extension</em:description>
-    <em:creator>Your Name Here</em:creator>
-    <em:homepageURL>http://www.example.com/</em:homepageURL>
+    <em:name>MozMetrics</em:name>
+    <em:description>Adds usage data reporting to Sync</em:description>
+    <em:creator>Matt DeBoard</em:creator>
+    <em:homepageURL>https://github.com/mattdeboard/mozmetrics/</em:homepageURL>
   </Description>      
 </RDF>
